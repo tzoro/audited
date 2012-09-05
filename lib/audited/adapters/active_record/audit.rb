@@ -33,7 +33,7 @@ module Audited
 
         # Sends push notification
         def send_notification
-          Pusher['test_channel'].trigger('greet', {:greeting => self.user.name + ' ' + self.action + ' ' + self.auditable_type + ' with ID:' + self.auditable_id})
+          Pusher['test_channel'].trigger('greet', {:greeting => self.user.name.to_s + ' ' + self.action.to_s + ' ' + self.auditable_type.to_s + ' with ID:' + self.auditable_id.to_s})
         end
 
         # Return all audits older than the current one.
