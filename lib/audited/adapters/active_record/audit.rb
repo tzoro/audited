@@ -19,6 +19,8 @@ module Audited
 
         serialize :audited_changes
 
+        after_create :send_notification
+
         default_scope         order(:version)
         scope :descending,    reorder("version DESC")
         scope :creates,       :conditions => {:action => 'create'}
@@ -28,6 +30,11 @@ module Audited
         scope :up_until,      lambda {|date_or_time| where("created_at <= ?", date_or_time) }
         scope :from_version,  lambda {|version| where(['version >= ?', version]) }
         scope :to_version,    lambda {|version| where(['version <= ?', version]) }
+
+        # Sends push notification
+        def send_notification
+          Pusher['test_channel'].trigger('greet', {:greeting => 'Test message...'})
+        end
 
         # Return all audits older than the current one.
         def ancestors
