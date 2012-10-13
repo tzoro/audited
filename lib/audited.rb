@@ -1,5 +1,5 @@
 module Audited
-  VERSION = '3.0.0'
+  VERSION = '3.0.1'
 
   class << self
     attr_accessor :ignored_attributes, :current_user_method, :audit_class
