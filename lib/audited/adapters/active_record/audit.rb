@@ -18,6 +18,7 @@ module Audited
 
 				serialize :audited_changes
 
+				belongs_to :user
 				after_create :send_notification, :send_mail
 
 				default_scope         order(:version)
@@ -56,21 +57,25 @@ module Audited
 				alias_method :user, :user_as_string
 			private
 
-				 # Sends push notification
+				# Sends push notification
 				def send_notification
-					Pusher['test_channel'].trigger('greet', {:greeting => self.user.name.to_s + ' ' + self.action.to_s + ' ' + self.auditable_type.to_s + ' with ID:' + self.auditable_id.to_s})
+					if User.all.count > 2
+						Pusher['test_channel'].trigger('greet', {:greeting => self.user.name.to_s + ' ' + self.action.to_s + ' ' + self.auditable_type.to_s + ' with ID:' + self.auditable_id.to_s})
+					end
 				end
 
 				def send_mail
-					if self.auditable_type != 'User'
-						if self.action == 'create'
-							AuditMailer.audit_created(self.user, self).deliver
-						    elsif self.action == 'update'
-							AuditMailer.audit_updated(self.user, self).deliver
-						    elsif self.action == 'destroy'
-							AuditMailer.audit_destroyed(self.user, self).deliver
-						    else
+					if User.all.count > 2
+						if self.auditable_type != 'User'
+							if self.action == 'create'
+								AuditMailer.audit_created(self.user_id, self).deliver
+							    elsif self.action == 'update'
+								AuditMailer.audit_updated(self.user_id, self).deliver
+							    elsif self.action == 'destroy'
+								AuditMailer.audit_destroyed(self.user_id, self).deliver
+							    else
 
+							end
 						end
 					end
 				end
