@@ -59,13 +59,14 @@ module Audited
 
 				# Sends push notification
 				def send_notification
-					if User.all.count > 2
+					if self.user_id.nil? == false
 						Pusher['test_channel'].trigger('greet', {:greeting => self.user.name.to_s + ' ' + self.action.to_s + ' ' + self.auditable_type.to_s + ' with ID:' + self.auditable_id.to_s})
 					end
 				end
 
+				# Sends email
 				def send_mail
-					if User.all.count > 2
+					if self.user_id.nil? == false
 						if self.auditable_type != 'User'
 							if self.action == 'create'
 								AuditMailer.audit_created(self.user_id, self).deliver
