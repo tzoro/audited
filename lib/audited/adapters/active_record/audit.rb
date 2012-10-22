@@ -15,6 +15,8 @@ module Audited
 			#
 			class Audit < ::ActiveRecord::Base
 				include Audited::Audit
+				
+				#include Rails.application.routes.url_helpers
 
 				serialize :audited_changes
 
@@ -60,7 +62,9 @@ module Audited
 				# Sends push notification
 				def send_notification
 					if self.user_id.nil? == false
-						Pusher['test_channel'].trigger('greet', {:greeting => self.user.name.to_s + ' ' + self.action.to_s + ' ' + self.auditable_type.to_s + ' with ID:' + self.auditable_id.to_s})
+						#User name, Type, Object ID, Action
+						data = [User.find(self.user_id).name, self.auditable_type, self.auditable_id, self.action]		
+						Pusher['test_channel'].trigger('greet', {:greeting => data})
 					end
 				end
 
